@@ -109,31 +109,43 @@ int execute(int *memory, h_call *calls) {
   }
 exit:
   return ebx;
+#undef val_set
+#undef val_get
 }
 
 int main() {
   int memory[] = {0, 0, 0, 0, 0};
+#define define_call(ct, ...) \
+  {c_##ct, .args.ct = {__VA_ARGS__}}
+#define assign_call(...) define_call(assign, __VA_ARGS__)
+#define add_call(...) define_call(add, __VA_ARGS__)
+#define printi_call(...) define_call(printi, __VA_ARGS__)
+#define exit_call {c_exit}
   h_call calls[] = {
-      {c_assign, .args.assign = {{v_memory, {0}}, {v_constant, 1}}},
-      {c_assign, .args.assign = {{v_memory, {1}}, {v_constant, 1}}},
-      {c_assign, .args.assign = {{v_register, r_ebx}, {v_memory, {0}}}},
-      {c_assign, .args.assign = {{v_register, r_eax}, {v_memory, {1}}}},
-      {c_add, .args.add = {{v_register, r_ebx}}},
-      {c_assign, .args.assign = {{v_memory, {2}}, {v_register, r_eax}}},
-      {c_assign, .args.assign = {{v_register, r_ebx}, {v_memory, {1}}}},
-      {c_add, .args.add = {{v_register, r_ebx}}},
-      {c_assign, .args.assign = {{v_memory, {3}}, {v_register, r_eax}}},
-      {c_assign, .args.assign = {{v_register, r_ebx}, {v_memory, {2}}}},
-      {c_add, .args.add = {{v_register, r_ebx}}},
-      {c_assign, .args.assign = {{v_memory, {4}}, {v_register, r_eax}}},
-      {c_printi, .args.printi = {{v_memory, {0}}}},
-      {c_printi, .args.printi = {{v_memory, {1}}}},
-      {c_printi, .args.printi = {{v_memory, {2}}}},
-      {c_printi, .args.printi = {{v_memory, {3}}}},
-      {c_printi, .args.printi = {{v_memory, {4}}}},
-      {c_assign, .args.assign = {{v_register, r_ebx}, {v_constant, 0}}},
-      {c_exit}};
-
+      assign_call({v_memory, {0}}, {v_constant, 1}),
+      assign_call({v_memory, {1}}, {v_constant, 1}),
+      assign_call({v_register, r_ebx}, {v_memory, {0}}),
+      assign_call({v_register, r_eax}, {v_memory, {1}}),
+      add_call({v_register, r_ebx}),
+      assign_call({v_memory, {2}}, {v_register, r_eax}),
+      assign_call({v_register, r_ebx}, {v_memory, {1}}),
+      add_call({v_register, r_ebx}),
+      assign_call({v_memory, {3}}, {v_register, r_eax}),
+      assign_call({v_register, r_ebx}, {v_memory, {2}}),
+      add_call({v_register, r_ebx}),
+      assign_call({v_memory, {4}}, {v_register, r_eax}),
+      printi_call({v_memory, {0}}),
+      printi_call({v_memory, {1}}),
+      printi_call({v_memory, {2}}),
+      printi_call({v_memory, {3}}),
+      printi_call({v_memory, {4}}),
+      assign_call({v_register, r_ebx}, {v_constant, 0}),
+      exit_call};
+#undef define_call
+#undef assign_call
+#undef add_call
+#undef printi_call
+#undef exit_call
   printf("fibonacci 5:\n");
   int exitcode = execute(memory, calls);
   printf("exit code: %d\n", exitcode);
