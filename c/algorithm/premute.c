@@ -55,7 +55,7 @@ int main() {
   int nums[] = {1,2,3,4};
   int* copy = (int*)malloc(n * sizeof(int));
 
-  printf("premutate unsorted\n");
+  printf("unsorted permutation\n");
   for (i = 0; i < factorial(n); i++) {
     memcpy(copy, nums, n * sizeof(int));
     permute(i, copy, n);
@@ -67,7 +67,7 @@ int main() {
     printf("%d\n", copy[j]);
   }
 
-  printf("premutate sorted\n");
+  printf("sorted permutation\n");
   for (i = 0; i < factorial(n); i++) {
     memcpy(copy, nums, n * sizeof(int));
     permute_sorted(i, copy, n);
